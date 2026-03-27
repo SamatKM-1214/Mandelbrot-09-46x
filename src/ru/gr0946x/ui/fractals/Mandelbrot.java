@@ -2,6 +2,7 @@ package ru.gr0946x.ui.fractals;
 
 import ru.smak.math.Complex;
 
+import static java.lang.Math.max;
 import static java.lang.Math.sqrt;
 
 public class Mandelbrot implements Fractal{
@@ -17,10 +18,10 @@ public class Mandelbrot implements Fractal{
         var c = new Complex(x, y);
         var z = new Complex();
         int i = 0;
-        while (++i < maxIterations && z.getAbsoluteValue2() < R2){
+        while (z.getAbsoluteValue2() < R2 && ++i < maxIterations){
             z.timesAssign(z);
             z.plusAssign(c);
         }
-        return (i < maxIterations) ? 0f : 1f;
+        return (float)i / maxIterations;
     }
 }
