@@ -13,9 +13,9 @@ public class Menu extends JMenuBar {
     public void createMenu() {
         JMenu menu = new JMenu("Меню");
 
-        JMenuItem fileMenu = new JMenuItem("Файл");
+        JMenu fileMenu = new JMenu("Файл");
 
-        JMenuItem fileSave = new JMenuItem("Сохранить как...");
+        JMenu fileSave = new JMenu("Сохранить как...");
 
         JMenuItem saveAsPNG = new JMenuItem("Файл png");
         JMenuItem saveAsJPG = new JMenuItem("Файл jpg");
@@ -25,21 +25,22 @@ public class Menu extends JMenuBar {
 
         JMenuItem undo = new JMenuItem("Отменить [Ctrl + Z]");
 
-        JMenuItem juliaSet = new JMenuItem("Сохранить в png...");
+        JMenuItem juliaSet = new JMenuItem("Показать множество Жюлиа");
 
         JMenuItem changeFractalFunc = new JMenuItem("Задать функцию построения фрактала...");
 
         JMenuItem changeColorize = new JMenuItem("Задать цветовую схему...");
 
         menu.add(fileMenu);
-        menu.addSeparator();
-        menu.add(fileSave);
-        menu.add(saveAsPNG);
-        menu.add(saveAsJPG);
-        menu.add(saveAsFrac);
-        menu.add(openFile);
+        fileMenu.add(fileSave);
+        fileSave.add(saveAsPNG);
+        fileSave.add(saveAsJPG);
+        fileSave.add(saveAsFrac);
+        fileMenu.add(openFile);
         menu.add(undo);
+        menu.addSeparator();
         menu.add(juliaSet);
+        menu.addSeparator();
         menu.add(changeFractalFunc);
         menu.add(changeColorize);
 
