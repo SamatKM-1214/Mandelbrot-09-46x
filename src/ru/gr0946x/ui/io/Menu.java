@@ -117,6 +117,21 @@ public class Menu {
             }
             return (float) i / maxIt;
         }));
+        fractalFuncC.addActionListener(e -> window.setCurrentFractal((x, y) -> {
+            // z³ + c
+            var c = new Complex(x, y);
+            var z = new Complex();
+            int i = 0;
+            int maxIt = 100;
+            while (z.getAbsoluteValue2() < 4 && ++i < maxIt) {
+                var zOld = new Complex(0, 0);   // создаём пустой
+                zOld.plusAssign(z);                 // копируем значение z
+                z.timesAssign(z);               // z = z²
+                z.timesAssign(zOld);            // z = z³
+                z.plusAssign(c);
+            }
+            return (float) i / maxIt;
+        }));
         return viewMenu;
 
     }
