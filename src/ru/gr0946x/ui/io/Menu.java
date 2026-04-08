@@ -7,6 +7,7 @@ import ru.smak.math.Complex;
 
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Menu {
     private final MainWindow window;
@@ -131,6 +132,14 @@ public class Menu {
                 z.plusAssign(c);
             }
             return (float) i / maxIt;
+        }));
+        colorSchemeB.addActionListener(e -> window.setCurrentColorFunction(value -> {
+            if (value == 1.0f) return Color.BLACK;
+            var intensity = (float) (1 - value);
+            var r = intensity;
+            var g = intensity;
+            var b = intensity;
+            return new Color(r, g, b);
         }));
         return viewMenu;
 
