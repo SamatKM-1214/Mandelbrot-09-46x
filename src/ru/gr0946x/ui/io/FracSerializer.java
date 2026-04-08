@@ -1,4 +1,4 @@
-package ru.gr0946x.ui;
+package ru.gr0946x.ui.io;
 
 import ru.gr0946x.Converter;
 import ru.gr0946x.ui.fractals.FractalState;
@@ -9,19 +9,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 
-public class FractalFileManager {
+public class FracSerializer implements FractalSerializer {
 
-    private final Component parent;
-    private final Converter conv;
-    private final Mandelbrot mandelbrot;
-
-    public FractalFileManager(Component parent, Converter conv, Mandelbrot mandelbrot) {
-        this.parent = parent;
-        this.conv = conv;
-        this.mandelbrot = mandelbrot;
-    }
-
-    public void save() {
+    @Override
+    public void save(Component parent, Converter conv, Mandelbrot mandelbrot) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Файлы фракталов (*.frac)", "frac"));
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -49,7 +40,8 @@ public class FractalFileManager {
         }
     }
 
-    public void open(Runnable onSuccess) {
+    @Override
+    public void open(Component parent, Converter conv, Mandelbrot mandelbrot, Runnable onSuccess) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Файлы фракталов (*.frac)", "frac"));
         fileChooser.setAcceptAllFileFilterUsed(false);

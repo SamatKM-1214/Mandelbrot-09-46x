@@ -1,13 +1,16 @@
-package ru.gr0946x.ui;
+package ru.gr0946x.ui.io;
 
 import ru.gr0946x.Converter;
+import ru.gr0946x.ui.MainWindow;
 import ru.gr0946x.ui.fractals.Mandelbrot;
+
 
 import javax.swing.*;
 
 public class Menu {
     private final MainWindow window;
     private final FractalFileManager fileManager;
+    private final FractalSerializer fracSerializer = new FracSerializer();
 
     public Menu(MainWindow window, Converter conv, Mandelbrot mandelbrot) {
         this.window = window;
@@ -16,17 +19,14 @@ public class Menu {
     }
 
     public void createMenu() {
-        JMenuBar menuBar = createMenuBar();
-        window.setJMenuBar(menuBar);
+        window.setJMenuBar(createMenuBar());
     }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-
         menuBar.add(createFileMenu());
         menuBar.add(createEditMenu());
         menuBar.add(createViewMenu());
-
         return menuBar;
     }
 
@@ -38,10 +38,10 @@ public class Menu {
         JMenuItem saveAsJPG = new JMenuItem("Файл .jpg");
 
         JMenuItem saveAsFrac = new JMenuItem("Файл .frac");
-        saveAsFrac.addActionListener(e -> fileManager.save());
+        saveAsFrac.addActionListener(e -> fileManager.save(fracSerializer));
 
         JMenuItem openFile = new JMenuItem("Открыть...");
-        openFile.addActionListener(e -> fileManager.open(window::repaint));
+        openFile.addActionListener(e -> fileManager.open(fracSerializer, window::repaint));
 
         JMenuItem createAnimation = new JMenuItem("Создать анимацию...");
 
@@ -49,7 +49,6 @@ public class Menu {
         fileSave.add(saveAsPNG);
         fileSave.add(saveAsJPG);
         fileSave.add(saveAsFrac);
-
         fileMenu.add(openFile);
         fileMenu.addSeparator();
         fileMenu.add(createAnimation);
