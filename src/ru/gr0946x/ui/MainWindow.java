@@ -2,6 +2,9 @@ package ru.gr0946x.ui;
 
 import ru.gr0946x.Converter;
 import ru.gr0946x.ui.fractals.Mandelbrot;
+import ru.gr0946x.ui.io.FracSerializer;
+import ru.gr0946x.ui.io.FractalFileManager;
+import ru.gr0946x.ui.io.FractalSerializer;
 import ru.gr0946x.ui.io.Menu;
 import ru.gr0946x.ui.painting.FractalPainter;
 import ru.gr0946x.ui.painting.Painter;
@@ -16,12 +19,18 @@ public class MainWindow extends JFrame {
     private final Painter painter;
     private final Mandelbrot mandelbrot;
     private final Converter conv;
+    private final FractalSerializer fracSerializer;
+    private final FractalFileManager fileManager;
+    private boolean adaptiveIterationsEnabled = true;
 
     public MainWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(800, 650));
+
         mandelbrot = new Mandelbrot();
         conv = new Converter(-2.0, 1.0, -1.0, 1.0);
+        fracSerializer = new FracSerializer();
+        fileManager = new FractalFileManager(this, conv, mandelbrot);
 
         painter = new FractalPainter(mandelbrot, conv, (value) -> {
             if (value == 1.0) return Color.BLACK;
@@ -44,16 +53,21 @@ public class MainWindow extends JFrame {
             var yMax = conv.yScr2Crt(r.y);
             conv.setXShape(xMin, xMax);
             conv.setYShape(yMin, yMax);
-            double zoomFactor = 3.0 / (xMax - xMin);
-            mandelbrot.setMaxIterations(Math.max(100, (int)(100 * (1 + Math.log10(zoomFactor)))));
+
+            if (adaptiveIterationsEnabled) {
+                double zoomFactor = 3.0 / (xMax - xMin);
+                mandelbrot.setMaxIterations(Math.max(100, (int)(100 * (1 + Math.log10(zoomFactor)))));
+            }
+
             mainPanel.repaint();
         });
 
-        new Menu(this, conv, mandelbrot);
+        new Menu(this, fracSerializer, fileManager);
 
         setContent();
     }
-    private void setContent(){
+
+    private void setContent() {
         var gl = new GroupLayout(getContentPane());
         setLayout(gl);
 
@@ -68,6 +82,10 @@ public class MainWindow extends JFrame {
                 .addComponent(mainPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
                 .addGap(8)
         );
+    }
+
+    public void setAdaptiveIterationsEnabled(boolean enabled) {
+        this.adaptiveIterationsEnabled = enabled;
     }
 }
 
