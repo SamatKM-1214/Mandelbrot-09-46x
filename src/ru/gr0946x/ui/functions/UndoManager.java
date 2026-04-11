@@ -29,4 +29,8 @@ public class UndoManager {
         }
         return false;
     }
+
+    public boolean canUndo() {
+        return !history.isEmpty();
+    }
 }

@@ -93,5 +93,13 @@ public class MainWindow extends JFrame {
         mandelbrot.setMaxIterations(state.maxIterations());
         mainPanel.repaint();
     }
+    public void triggerUndo() {
+        if (undoManager.undo()) {
+            repaint();
+        }
+    }
+    public boolean canUndo() {
+        return undoManager.canUndo();
+    }
 }
 
