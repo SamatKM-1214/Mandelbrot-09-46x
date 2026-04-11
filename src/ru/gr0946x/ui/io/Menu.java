@@ -66,26 +66,21 @@ public class Menu {
         JMenuItem undoItem = new JMenuItem("Отменить");
         undoItem.setAccelerator(KeyStroke.getKeyStroke("control Z"));
 
-//        JMenuItem redoItem = new JMenuItem("Повторить");
-//        redoItem.setAccelerator(KeyStroke.getKeyStroke("control Y"));
+        undoItem.setEnabled(mainWindow.canUndo());
+        undoItem.addActionListener(e -> mainWindow.triggerUndo());
+
+        editMenu.addMenuListener(new javax.swing.event.MenuListener() {
+            @Override
+            public void menuSelected(javax.swing.event.MenuEvent e) {
+                undoItem.setEnabled(mainWindow.canUndo());
+            }
+            @Override
+            public void menuDeselected(javax.swing.event.MenuEvent e) {}
+            @Override
+            public void menuCanceled(javax.swing.event.MenuEvent e) {}
+        });
 
         editMenu.add(undoItem);
-//        editMenu.add(redoItem);
-
-        JMenuItem undo = new JMenuItem("Отменить");
-        undo.setAccelerator(KeyStroke.getKeyStroke("control Z"));
-        undo.setEnabled(false);
-        undo.addActionListener(e -> {
-            window.triggerUndo();
-        });
-        editMenu.addMenuListener(new javax.swing.event.MenuListener() {
-            @Override public void menuSelected(javax.swing.event.MenuEvent e) {
-                undo.setEnabled(window.canUndo());
-            }
-            @Override public void menuDeselected(javax.swing.event.MenuEvent e) {}
-            @Override public void menuCanceled(javax.swing.event.MenuEvent e) {}
-        });
-        editMenu.add(undo);
         return editMenu;
     }
 
