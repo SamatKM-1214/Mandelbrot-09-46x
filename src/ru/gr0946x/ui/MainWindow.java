@@ -6,7 +6,7 @@ import ru.gr0946x.ui.fractals.Mandelbrot;
 import ru.gr0946x.ui.functions.UndoManager;
 import ru.gr0946x.ui.io.FracSerializer;
 import ru.gr0946x.ui.io.FractalFileManager;
-import ru.gr0946x.ui.io.FractalSerializer;
+import ru.gr0946x.ui.io.ImageSerializer;
 import ru.gr0946x.ui.io.Menu;
 import ru.gr0946x.ui.painting.FractalPainter;
 import ru.gr0946x.ui.painting.Painter;
@@ -25,8 +25,9 @@ public class MainWindow extends JFrame {
     private final Painter painter;
     private final Mandelbrot mandelbrot;
     private final Converter conv;
-    private final FractalSerializer fracSerializer;
+    private final FracSerializer fracSerializer;
     private final FractalFileManager fileManager;
+    private final ImageSerializer imageSerializer;
     private boolean adaptiveIterationsEnabled = true;
     private final UndoManager undoManager;
 
@@ -39,6 +40,7 @@ public class MainWindow extends JFrame {
         this.undoManager = new UndoManager(this::restoreState);
         fracSerializer = new FracSerializer();
         fileManager = new FractalFileManager(this, conv, mandelbrot);
+        imageSerializer = new ImageSerializer();
 
         painter = new FractalPainter(mandelbrot, conv, (value) -> {
             if (value == 1.0) return Color.BLACK;
@@ -48,10 +50,18 @@ public class MainWindow extends JFrame {
             return new Color(r, g, b);
         });
 
-        mainPanel = new SelectablePanel(painter);
+        mainPanel = new SelectablePanel(painter, imageSerializer);
         mainPanel.setBackground(Color.WHITE);
 
         mainPanel.addSelectListener((r) -> {
+            if (imageSerializer.isImageMode()) {
+                JOptionPane.showMessageDialog(this,
+                        "Масштабирование недоступно при просмотре изображения.\nОткройте фрактал (.frac) для масштабирования.",
+                        "Предупреждение",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             if (r.width <= 2 || r.height <= 2) {
                 return;
             }
@@ -72,10 +82,11 @@ public class MainWindow extends JFrame {
                 mandelbrot.setMaxIterations(Math.max(100, (int)(100 * (1 + Math.log10(zoomFactor)))));
             }
 
+            imageSerializer.clearImage();
             mainPanel.repaint();
         });
 
-        new Menu(this, fracSerializer, fileManager);
+        new Menu(this, fracSerializer, fileManager, imageSerializer);
 
         setContent();
 
@@ -116,8 +127,15 @@ public class MainWindow extends JFrame {
         return undoManager.canUndo();
     }
 
+    public void saveFractal() {
+        fracSerializer.saveWithFormatChoice(this, conv, mandelbrot, mainPanel, imageSerializer);
+    }
+
+    public void openFile() {
+        fracSerializer.openWithFormatChoice(this, conv, mandelbrot, mainPanel, imageSerializer);
+    }
+
     public void setAdaptiveIterationsEnabled(boolean enabled) {
         this.adaptiveIterationsEnabled = enabled;
     }
 }
-

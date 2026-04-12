@@ -1,5 +1,6 @@
 package ru.gr0946x.ui;
 
+import ru.gr0946x.ui.io.ImageSerializer;
 import ru.gr0946x.ui.painting.Painter;
 
 import java.awt.*;
@@ -9,18 +10,10 @@ import java.util.ArrayList;
 public class SelectablePanel extends PaintPanel {
     private SelectedRect rect = null;
     private Graphics g;
-
     private final ArrayList<SelectListener> selectHandlers = new ArrayList<>();
-    public void addSelectListener(SelectListener listener) {
-        selectHandlers.add(listener);
-    }
 
-    public void removeSelectListener(SelectListener listener) {
-        selectHandlers.remove(listener);
-    }
-
-    public SelectablePanel(Painter painter) {
-        super(painter);
+    public SelectablePanel(Painter painter, ImageSerializer imageSerializer) {
+        super(painter, imageSerializer);
         g = getGraphics();
         addMouseListener(new MouseAdapter() {
             @Override
@@ -34,15 +27,14 @@ public class SelectablePanel extends PaintPanel {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 paintSelectedRect();
-                for (var handler : selectHandlers)
+                for (var handler : selectHandlers) {
                     handler.onSelect(new Rectangle(
                             rect.getUpperLeft().x,
                             rect.getUpperLeft().y,
                             rect.getWidth(),
                             rect.getHeight()
-                            )
-                    );
-
+                    ));
+                }
                 rect = null;
             }
         });
@@ -52,8 +44,9 @@ public class SelectablePanel extends PaintPanel {
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
                 paintSelectedRect();
-                if (rect != null)
+                if (rect != null) {
                     rect.setLastPoint(e.getX(), e.getY());
+                }
                 paintSelectedRect();
             }
         });
@@ -65,6 +58,14 @@ public class SelectablePanel extends PaintPanel {
                 g = getGraphics();
             }
         });
+    }
+
+    public void addSelectListener(SelectListener listener) {
+        selectHandlers.add(listener);
+    }
+
+    public void removeSelectListener(SelectListener listener) {
+        selectHandlers.remove(listener);
     }
 
     private void paintSelectedRect() {
