@@ -10,14 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class ImageSerializer {
-
-    public void saveAsPNG(Component parent, Converter conv, JPanel paintPanel) {
-        saveAsImage(parent, conv, paintPanel, "png");
-    }
-
-    public void saveAsJPEG(Component parent, Converter conv, JPanel paintPanel) {
-        saveAsImage(parent, conv, paintPanel, "jpg");
-    }
+    private BufferedImage currentImage = null;
 
     public void openImage(Component parent, JPanel paintPanel) {
         JFileChooser fileChooser = new JFileChooser();
@@ -33,10 +26,9 @@ public class ImageSerializer {
         if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             try {
-                BufferedImage image = ImageIO.read(file);
-                if (image != null) {
-                    Graphics g = paintPanel.getGraphics();
-                    g.drawImage(image, 0, 0, paintPanel.getWidth(), paintPanel.getHeight(), null);
+                currentImage = ImageIO.read(file);
+                if (currentImage != null) {
+                    paintPanel.repaint();
                     JOptionPane.showMessageDialog(parent, "Изображение загружено!", "Успех", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(parent, "Не удалось прочитать изображение", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -46,7 +38,15 @@ public class ImageSerializer {
             }
         }
     }
+    public void drawImage(Graphics g, int width, int height) {
+        if (currentImage != null) {
+            g.drawImage(currentImage, 0, 0, width, height, null);
+        }
+    }
 
+    public void clearImage() {
+        currentImage = null;
+    }
     private void saveAsImage(Component parent, Converter conv, JPanel paintPanel, String format) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Сохранить как " + format.toUpperCase());

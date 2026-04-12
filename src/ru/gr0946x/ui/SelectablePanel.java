@@ -1,5 +1,6 @@
 package ru.gr0946x.ui;
 
+import ru.gr0946x.ui.io.ImageSerializer;
 import ru.gr0946x.ui.painting.Painter;
 
 import java.awt.*;
@@ -19,8 +20,9 @@ public class SelectablePanel extends PaintPanel {
         selectHandlers.remove(listener);
     }
 
-    public SelectablePanel(Painter painter) {
-        super(painter);
+    public SelectablePanel(Painter painter, ImageSerializer imageSerializer) {
+        super(painter, imageSerializer);
+
         g = getGraphics();
         addMouseListener(new MouseAdapter() {
             @Override
