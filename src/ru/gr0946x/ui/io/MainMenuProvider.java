@@ -1,37 +1,29 @@
 package ru.gr0946x.ui.io;
 
-import ru.gr0946x.Converter;
 import ru.gr0946x.ui.MainWindow;
-import ru.gr0946x.ui.fractals.Mandelbrot;
-
 
 import javax.swing.*;
+import javax.swing.event.MenuListener;
+import javax.swing.event.MenuEvent;
 
-public class Menu {
+public class MainMenuProvider implements MenuProvider {
     private final MainWindow mainWindow;
+    private final FractalSerializer fractalSerializer;
     private final FractalFileManager fileManager;
-    private final FractalSerializer fracSerializer;
+    private final ImageSerializer imageSerializer;
 
-    public Menu(MainWindow mainWindow, FractalSerializer fracSerializer, FractalFileManager fileManager, ImageSerializer imageSerializer) {
+    public MainMenuProvider(MainWindow mainWindow,
+                            FractalSerializer fractalSerializer,
+                            FractalFileManager fileManager,
+                            ImageSerializer imageSerializer) {
         this.mainWindow = mainWindow;
-        this.fracSerializer = fracSerializer;
+        this.fractalSerializer = fractalSerializer;
         this.fileManager = fileManager;
-        createMenu();
+        this.imageSerializer = imageSerializer;
     }
 
-    public void createMenu() {
-        mainWindow.setJMenuBar(createMenuBar());
-    }
-
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(createFileMenu());
-        menuBar.add(createEditMenu());
-        menuBar.add(createViewMenu());
-        return menuBar;
-    }
-
-    private JMenu createFileMenu() {
+    @Override
+    public JMenu createFileMenu() {
         JMenu fileMenu = new JMenu("Файл");
         fileMenu.setMnemonic('F');
 
@@ -55,7 +47,8 @@ public class Menu {
         return fileMenu;
     }
 
-    private JMenu createEditMenu() {
+    @Override
+    public JMenu createEditMenu() {
         JMenu editMenu = new JMenu("Правка");
         editMenu.setMnemonic('E');
 
@@ -65,24 +58,28 @@ public class Menu {
         undoItem.setEnabled(mainWindow.canUndo());
         undoItem.addActionListener(e -> mainWindow.triggerUndo());
 
-        editMenu.addMenuListener(new javax.swing.event.MenuListener() {
+        editMenu.addMenuListener(new MenuListener() {
             @Override
-            public void menuSelected(javax.swing.event.MenuEvent e) {
+            public void menuSelected(MenuEvent e) {
                 undoItem.setEnabled(mainWindow.canUndo());
             }
+
             @Override
-            public void menuDeselected(javax.swing.event.MenuEvent e) {}
+            public void menuDeselected(MenuEvent e) {}
+
             @Override
-            public void menuCanceled(javax.swing.event.MenuEvent e) {}
+            public void menuCanceled(MenuEvent e) {}
         });
 
         editMenu.add(undoItem);
         return editMenu;
     }
 
-    private JMenu createViewMenu() {
+    @Override
+    public JMenu createViewMenu() {
         JMenu viewMenu = new JMenu("Вид");
         viewMenu.setMnemonic('V');
+
 
         JMenu setFractalFuncMenu = new JMenu("Задать функцию построения фрактала");
         ButtonGroup functionGroup = new ButtonGroup();
@@ -90,18 +87,6 @@ public class Menu {
         fractalFunc1Item.setSelected(true);
         JRadioButtonMenuItem fractalFunc2Item = new JRadioButtonMenuItem("Функция 2");
         JRadioButtonMenuItem fractalFunc3Item = new JRadioButtonMenuItem("Функция 3");
-
-        JMenu setColorSchemeMenu = new JMenu("Задать цветовую схему");
-        ButtonGroup colorSchemeGroup = new ButtonGroup();
-        JRadioButtonMenuItem colorScheme1Item = new JRadioButtonMenuItem("Схема 1");
-        colorScheme1Item.setSelected(true);
-        JRadioButtonMenuItem colorScheme2Item = new JRadioButtonMenuItem("Схема 2");
-        JRadioButtonMenuItem colorScheme3Item = new JRadioButtonMenuItem("Схема 3");
-
-        JCheckBoxMenuItem adaptiveIterationsItem = new JCheckBoxMenuItem("Адаптивное число итераций");
-        adaptiveIterationsItem.addActionListener(e -> mainWindow.setAdaptiveIterationsEnabled(adaptiveIterationsItem.isSelected()));
-        adaptiveIterationsItem.setSelected(true);
-        adaptiveIterationsItem.setAccelerator(KeyStroke.getKeyStroke("control I"));
 
         functionGroup.add(fractalFunc1Item);
         functionGroup.add(fractalFunc2Item);
@@ -111,6 +96,14 @@ public class Menu {
         setFractalFuncMenu.add(fractalFunc2Item);
         setFractalFuncMenu.add(fractalFunc3Item);
 
+
+        JMenu setColorSchemeMenu = new JMenu("Задать цветовую схему");
+        ButtonGroup colorSchemeGroup = new ButtonGroup();
+        JRadioButtonMenuItem colorScheme1Item = new JRadioButtonMenuItem("Схема 1");
+        colorScheme1Item.setSelected(true);
+        JRadioButtonMenuItem colorScheme2Item = new JRadioButtonMenuItem("Схема 2");
+        JRadioButtonMenuItem colorScheme3Item = new JRadioButtonMenuItem("Схема 3");
+
         colorSchemeGroup.add(colorScheme1Item);
         colorSchemeGroup.add(colorScheme2Item);
         colorSchemeGroup.add(colorScheme3Item);
@@ -118,6 +111,12 @@ public class Menu {
         setColorSchemeMenu.add(colorScheme1Item);
         setColorSchemeMenu.add(colorScheme2Item);
         setColorSchemeMenu.add(colorScheme3Item);
+
+
+        JCheckBoxMenuItem adaptiveIterationsItem = new JCheckBoxMenuItem("Адаптивное число итераций");
+        adaptiveIterationsItem.addActionListener(e -> mainWindow.setAdaptiveIterationsEnabled(adaptiveIterationsItem.isSelected()));
+        adaptiveIterationsItem.setSelected(true);
+        adaptiveIterationsItem.setAccelerator(KeyStroke.getKeyStroke("control I"));
 
         viewMenu.add(setFractalFuncMenu);
         viewMenu.add(setColorSchemeMenu);

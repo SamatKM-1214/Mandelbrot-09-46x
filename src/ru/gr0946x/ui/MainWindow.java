@@ -4,10 +4,7 @@ import ru.gr0946x.Converter;
 import ru.gr0946x.ui.fractals.FractalState;
 import ru.gr0946x.ui.fractals.Mandelbrot;
 import ru.gr0946x.ui.functions.UndoManager;
-import ru.gr0946x.ui.io.FracSerializer;
-import ru.gr0946x.ui.io.FractalFileManager;
-import ru.gr0946x.ui.io.ImageSerializer;
-import ru.gr0946x.ui.io.Menu;
+import ru.gr0946x.ui.io.*;
 import ru.gr0946x.ui.painting.FractalPainter;
 import ru.gr0946x.ui.painting.Painter;
 import javax.swing.KeyStroke;
@@ -85,7 +82,11 @@ public class MainWindow extends JFrame {
             mainPanel.repaint();
         });
 
-        new Menu(this, fracSerializer, fileManager, imageSerializer);
+        new MenuManager(this, new MainMenuProvider(
+                this,
+                fracSerializer,
+                fileManager,
+                imageSerializer));
         getRootPane().registerKeyboardAction(
                 e -> undoManager.undo(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK),
