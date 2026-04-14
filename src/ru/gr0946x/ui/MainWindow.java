@@ -1,6 +1,9 @@
 package ru.gr0946x.ui;
 
 import ru.gr0946x.Converter;
+
+import ru.gr0946x.ui.fractals.ColorFunction;
+import ru.gr0946x.ui.fractals.Fractal;
 import ru.gr0946x.ui.fractals.FractalState;
 import ru.gr0946x.ui.fractals.Mandelbrot;
 import ru.gr0946x.ui.functions.UndoManager;
@@ -110,6 +113,19 @@ public class MainWindow extends JFrame {
                 .addGap(8)
         );
     }
+    public void setCurrentFractal(Fractal fractal) {
+        if (painter instanceof FractalPainter fp) {
+            fp.setFractal(fractal);
+        }
+        mainPanel.repaint();
+    }
+    public void setCurrentColorFunction(ColorFunction colorFunction) {
+        if (painter instanceof FractalPainter fp) {
+            fp.setColorFunction(colorFunction);
+        }
+        mainPanel.repaint();
+    }
+
     private void restoreState(FractalState state) {
         conv.setXShape(state.xMin(), state.xMax());
         conv.setYShape(state.yMin(), state.yMax());

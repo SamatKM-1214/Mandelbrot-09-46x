@@ -1,15 +1,20 @@
 package ru.gr0946x.ui.io;
 
+import ru.gr0946x.ui.FunctionAndColorShemsLists;
 import ru.gr0946x.ui.MainWindow;
+
 
 import javax.swing.*;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MenuEvent;
+import java.awt.*;
 
 public class MainMenuProvider implements MenuProvider {
     private final MainWindow mainWindow;
     private final FractalSerializer fractalSerializer;
     private final FractalFileManager fileManager;
+
+    private final FunctionAndColorShemsLists lists;
     private final ImageSerializer imageSerializer;
 
     public MainMenuProvider(MainWindow mainWindow,
@@ -20,6 +25,7 @@ public class MainMenuProvider implements MenuProvider {
         this.fractalSerializer = fractalSerializer;
         this.fileManager = fileManager;
         this.imageSerializer = imageSerializer;
+        this.lists = new FunctionAndColorShemsLists();
     }
 
     @Override
@@ -118,11 +124,29 @@ public class MainMenuProvider implements MenuProvider {
         adaptiveIterationsItem.setSelected(true);
         adaptiveIterationsItem.setAccelerator(KeyStroke.getKeyStroke("control I"));
 
+        // Функции фракталов
+        fractalFunc1Item.addActionListener(_ ->
+                mainWindow.setCurrentFractal(lists.getFractalFunctions().get(0)));
+        fractalFunc2Item.addActionListener(_ ->
+                mainWindow.setCurrentFractal(lists.getFractalFunctions().get(1)));
+        fractalFunc3Item.addActionListener(_ ->
+                mainWindow.setCurrentFractal(lists.getFractalFunctions().get(2)));
+
+        // Цветовые схемы
+        colorScheme1Item.addActionListener(_ ->
+                mainWindow.setCurrentColorFunction(lists.getColorSchemes().get(0)));
+        colorScheme2Item.addActionListener(_ ->
+                mainWindow.setCurrentColorFunction(lists.getColorSchemes().get(1)));
+        colorScheme3Item.addActionListener(_ ->
+                mainWindow.setCurrentColorFunction(lists.getColorSchemes().get(2)));
+
         viewMenu.add(setFractalFuncMenu);
         viewMenu.add(setColorSchemeMenu);
         viewMenu.addSeparator();
         viewMenu.add(adaptiveIterationsItem);
 
         return viewMenu;
+
     }
+
 }
