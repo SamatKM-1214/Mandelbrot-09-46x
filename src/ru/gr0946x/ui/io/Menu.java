@@ -1,6 +1,7 @@
 package ru.gr0946x.ui.io;
 
 import ru.gr0946x.Converter;
+import ru.gr0946x.ui.FunctionAndColorShemsLists;
 import ru.gr0946x.ui.MainWindow;
 import ru.gr0946x.ui.fractals.Mandelbrot;
 import ru.smak.math.Complex;
@@ -13,10 +14,12 @@ public class Menu {
     private final MainWindow window;
     private final FractalFileManager fileManager;
     private final FractalSerializer fracSerializer = new FracSerializer();
+    private final FunctionAndColorShemsLists lists;
 
     public Menu(MainWindow window, Converter conv, Mandelbrot mandelbrot) {
         this.window = window;
         this.fileManager = new FractalFileManager(window, conv, mandelbrot);
+        this.lists=new FunctionAndColorShemsLists();
         createMenu();
     }
 
@@ -92,67 +95,27 @@ public class Menu {
         setColorScheme.add(colorSchemeA);
         setColorScheme.add(colorSchemeB);
         setColorScheme.add(colorSchemeC);
+        // Функции фракталов
+        fractalFuncA.addActionListener(_ ->
+                window.setCurrentFractal(lists.getFractalFunctions().get(0)));
 
-        fractalFuncA.addActionListener(_ -> window.setCurrentFractal((x, y) -> {
-            // z² + c — классический Мандельброт
-            var c = new Complex(x, y);
-            var z = new Complex();
-            int i = 0;
-            int maxIt = 100;
-            while (z.getAbsoluteValue2() < 4 && ++i < maxIt) {
-                z.timesAssign(z);
-                z.plusAssign(c);
-            }
-            return (float) i / maxIt;
-        }));
-        fractalFuncB.addActionListener(_ -> window.setCurrentFractal((x, y) -> {
-            // z⁴ + c
-            var c = new Complex(x, y);
-            var z = new Complex();
-            int i = 0;
-            int maxIt = 100;
-            while (z.getAbsoluteValue2() < 4 && ++i < maxIt) {
-                z.timesAssign(z);
-                z.timesAssign(z);
-                z.plusAssign(c);
-            }
-            return (float) i / maxIt;
-        }));
-        fractalFuncC.addActionListener(_ -> window.setCurrentFractal((x, y) -> {
-            // z³ + c
-            var c = new Complex(x, y);
-            var z = new Complex();
-            int i = 0;
-            int maxIt = 100;
-            while (z.getAbsoluteValue2() < 4 && ++i < maxIt) {
-                var zOld = new Complex(0, 0);   // создаём пустой
-                zOld.plusAssign(z);                 // копируем значение z
-                z.timesAssign(z);               // z = z²
-                z.timesAssign(zOld);            // z = z³
-                z.plusAssign(c);
-            }
-            return (float) i / maxIt;
-        }));
-        colorSchemeA.addActionListener(_ -> window.setCurrentColorFunction(value -> {
-            if (value == 1.0f) return Color.BLACK;
-            var r = (float) Math.abs(Math.sin(5 * value));
-            var g = (float) Math.abs(Math.cos(8 * value) * Math.cos(3 * value));
-            var b = (float) Math.abs((Math.sin(7 * value) + Math.cos(15 * value)) / 2f);
-            return new Color(r, g, b);
-        }));
-        colorSchemeB.addActionListener(_ -> window.setCurrentColorFunction(value -> {
-            if (value == 1.0f) return Color.BLACK;
-            var intensity = (float) (1 - value);
-            return new Color(intensity, intensity, intensity);
-        }));
-        colorSchemeC.addActionListener(_ -> window.setCurrentColorFunction(value -> {
-            if (value == 1.0f) return Color.BLACK;
-            var intensity = (float) (1 - value);
-            var r = 0f;
-            var g = intensity * 0.4f;
-            var b = intensity;
-            return new Color(r, g, b);
-        }));
+        fractalFuncB.addActionListener(_ ->
+                window.setCurrentFractal(lists.getFractalFunctions().get(1)));
+
+        fractalFuncC.addActionListener(_ ->
+                window.setCurrentFractal(lists.getFractalFunctions().get(2)));
+
+        // Цветовые схемы
+        colorSchemeA.addActionListener(_ ->
+                window.setCurrentColorFunction(lists.getColorSchemes().get(0)));
+
+        colorSchemeB.addActionListener(_ ->
+                window.setCurrentColorFunction(lists.getColorSchemes().get(1)));
+
+        colorSchemeC.addActionListener(_ ->
+                window.setCurrentColorFunction(lists.getColorSchemes().get(2)));
+
+
         return viewMenu;
 
     }
