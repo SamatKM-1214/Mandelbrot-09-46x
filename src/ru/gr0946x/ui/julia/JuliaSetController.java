@@ -14,7 +14,6 @@ public class JuliaSetController {
 
     public static void attachTo(MainWindow mainWindow) {
         try {
-            // Получаем доступ к приватным полям mainWindow через рефлексию
             Field mainPanelField = MainWindow.class.getDeclaredField("mainPanel");
             mainPanelField.setAccessible(true);
             SelectablePanel mainPanel = (SelectablePanel) mainPanelField.get(mainWindow);
@@ -23,7 +22,6 @@ public class JuliaSetController {
             convField.setAccessible(true);
             Converter converter = (Converter) convField.get(mainWindow);
 
-            // Добавляем слушатель двойного клика
             mainPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -39,8 +37,11 @@ public class JuliaSetController {
             });
 
         } catch (NoSuchFieldException | IllegalAccessException ex) {
-            System.err.println("Не удалось подключить окно Жюлия: " + ex.getMessage());
-            ex.printStackTrace();
+            JOptionPane.showMessageDialog(mainWindow,
+                    "Ошибка: не удалось подключить множество Жюлия.\n" +
+                            "Сообщение: " + ex.getMessage(),
+                    "Ошибка",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

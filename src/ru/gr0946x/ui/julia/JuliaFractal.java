@@ -4,8 +4,6 @@ import ru.gr0946x.ui.fractals.Fractal;
 import ru.smak.math.Complex;
 
 public class JuliaFractal implements Fractal {
-    private int maxIterations = 100;
-    private final double R2 = 4;
     private Complex constant; // Фиксированная константа C для множества Жюлия
 
     public JuliaFractal(Complex constant) {
@@ -16,20 +14,12 @@ public class JuliaFractal implements Fractal {
         this.constant = constant;
     }
 
-    /* Не использовалось
-     public Complex getConstant() {
-        return constant;
-    }
-    public void setMaxIterations(int n) {
-        maxIterations = n;
-    }
-    public int getMaxIterations() {
-    return maxIterations;
-    }
-    */
-
     @Override
     public float inSetProbability(double x, double y) {
+        // Локальные константы
+        final int maxIterations = 100;
+        final double R2 = 4;
+
         // Для Жюлия: Z_{n+1} = Z_n^2 + C
         // Z начинается с координат пикселя (x, y)
         var z = new Complex(x, y);
