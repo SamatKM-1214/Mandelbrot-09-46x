@@ -109,20 +109,30 @@ public class SelectablePanel extends PaintPanel{
         int w = getWidth();
         int h = getHeight();
         if (w <= 0 || h <= 0) return;
+
         double cx = (converter.getXMin() + converter.getXMax()) / 2.0;
         double cy = (converter.getYMin() + converter.getYMax()) / 2.0;
         double xRange = converter.getXMax() - converter.getXMin();
-        double newYRange = xRange * h / w;
-        converter.setYShape(cy - newYRange / 2.0, cy + newYRange / 2.0);
+        double yRange = converter.getYMax() - converter.getYMin();
+
+        double currentAspect = xRange / yRange;
+        double targetAspect  = (double) w / h;
+
+        if (currentAspect < targetAspect) {
+
+            double newXRange = yRange * targetAspect;
+            converter.setXShape(cx - newXRange / 2.0, cx + newXRange / 2.0);
+        } else {
+            double newYRange = xRange / targetAspect;
+            converter.setYShape(cy - newYRange / 2.0, cy + newYRange / 2.0);
+        }
     }
 
     public void addSelectListener(SelectListener listener) {
         selectHandlers.add(listener);
     }
 
-    public void removeSelectListener(SelectListener listener) {
-        selectHandlers.remove(listener);
-    }
+
 
     public void setStateChangeListener(StateChangeListener listener) {
         this.stateChangeListener = listener;
